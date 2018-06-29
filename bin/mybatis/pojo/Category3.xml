@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mybatis.pojo">
+
+	<select id="getCategory" parameterType="int" resultType="Category">
+		select *
+		from category where id= #{id}
+	</select>
+
+	<resultMap type="Category" id="categoryBean">
+		<id column="cid" property="id" />
+		<result column="cname" property="name" />
+
+		<!-- 一对多关系 -->
+		<!-- property:指定的是集合属性的值，ofType：指的是集合中元素的类型 -->
+		<collection property="products" ofType="Product">
+			<id column="pid" property="id"></id>
+			<result column="pname" property="name" />
+			<result column="price" property="price" />
+		</collection>
+	</resultMap>
+	<!-- 关联查询分类和产品表 -->
+	<select id="listCategory" resultMap="categoryBean">
+		select c.*, p.*, c.id 'cid',
+		p.id 'pid', c.name 'cname', p.name 'pname' from
+		category c left join
+		product p on c.id = p.cid
+	</select>
+</mapper>

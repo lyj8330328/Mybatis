@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mybatis.pojo">
+
+	<select id="listProduct1" resultType="Product">
+		select * from product
+	</select>
+	<select id="listProductByName" resultType="Product" >
+		select * from product where name like concat('%',#{name},'%')
+	</select>
+	<!--  
+	<select id="getProduct" parameterType="int" resultType="Product">
+		select *
+		from product where id= #{id}
+	</select>-->
+
+	<update id="updateProduct" parameterType="map">
+		update product
+		set
+		cid=#{cid} where id=#{pid}
+	</update>
+
+	<update id="updateProduct2" parameterType="Product">
+		update product
+		set
+		cid=#{category.id} where id=#{id}
+	</update>
+
+	<resultMap type="Product" id="productBean">
+		<id column="pid" property="id" />
+		<result column="pname" property="name" />
+		<result column="price" property="price" />
+
+		<!-- 多对一关系 -->
+		<!-- property:指定的是集合属性的值，ofType：指的是集合中元素的类型 -->
+		<association property="category" javaType="Category">
+			<id column="cid" property="id" />
+			<result column="cname" property="name" />
+		</association>
+	</resultMap>
+	<!-- 关联查询分类和产品表 -->
+	<select id="listProduct" resultMap="productBean">
+		select c.*, p.*, c.id 'cid',
+		p.id 'pid', c.name 'cname', p.name 'pname' from
+		category c left join
+		product p on c.id = p.cid
+	</select>
+	<select id="getProduct" resultMap="productBean">
+		select c.*, p.*, c.id 'cid', p.id 'pid', c.name 'cname', p.name 'pname'
+		from category c
+		left join product p on c.id = p.cid
+		where p.id = #{id}
+	</select>
+</mapper>

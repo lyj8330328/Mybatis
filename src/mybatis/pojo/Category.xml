@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mybatis.pojo">
+	<select id="listCategory" resultType="Category">
+		select * from category
+	</select>
+
+	<select id="listByPageXML" parameterType="map" resultType="Category">
+		select * from category
+		<if test="start!=null and count!=null">
+			limit #{start},#{count}
+		</if>
+	</select>
+
+	<select id="listByPageHelper" resultType="Category">
+		select * from category
+	</select>
+</mapper>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mybatis.pojo">
+
+	<select id="listProduct1" resultType="Product">
+		select * from product
+	</select>
+	<select id="listProductByName" resultType="Product">
+		select *
+		from product
+		where name like concat('%',#{name},'%')
+	</select>
+	<select id="listProductByName2" resultType="Product">
+		<bind name="likename" value="'%'+name+'%'"/>
+		select *
+		from product
+		where name like #{likename}
+	</select>
+
+	<select id="listProduct2" resultType="Product">
+		select * from product
+		<if test="name!=null">
+			where name like concat('%',#{name},'%')
+		</if>
+	</select>
+	<select id="listProduct3" resultType="Product">
+		select * from product
+		<if test="name!=null">
+			where name like concat('%',#{name},'%')
+		</if>
+		<if test="price!=0">
+			and price>=#{price}
+		</if>
+	</select>
+	<select id="listProduct4" resultType="Product">
+		select * from product
+		<where>
+			<if test="name!=null">
+				and name like concat('%',#{name},'%')
+			</if>
+			<if test="price!=null and price!=0">
+				and price>#{price}
+			</if>
+		</where>
+	</select>
+	<select id="listProduct5" resultType="Product">
+		select * from product
+		<trim prefix="WHERE" prefixOverrides="AND|OR">
+			<if test="name!=null">
+				and name like concat('%',#{name},'%')
+			</if>
+			<if test="price!=null and price!=0">
+				and price>#{price}
+			</if>
+		</trim>
+	</select>
+	<select id="listProduct6" resultType="Product">
+		select * from product
+		<where>
+			<choose>
+				<when test="name!=null">
+					and name like concat('%',#{name},'%')
+				</when>
+				<when test="price!=null and price!=0">
+					and price>#{price}
+				</when>
+				<otherwise>
+					and id>1
+				</otherwise>
+			</choose>
+		</where>
+	</select>
+	<select id="listProduct7" resultType="Product">
+		select * from product
+		where id in
+		<foreach item="item" index="index" collection="list" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+	<update id="updateProduct" parameterType="Product">
+		update product
+		<set>
+			<if test="name!=null">name=#{name},</if>
+			<if test="price!=null">price=#{price}</if>
+		</set>
+		where id=#{id}
+	</update>
+	<update id="updateProduct2" parameterType="Product">
+		update product
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="name!=null">name=#{name},</if>
+			<if test="price!=null">price=#{price}</if>
+		</trim>
+		where id=#{id}
+	</update>
+</mapper>
